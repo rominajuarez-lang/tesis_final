@@ -76,7 +76,7 @@ def cargar_excel(uploaded_file):
     maestro["product_id"] = maestro["product_id"].astype(str)
     maestro["description"] = maestro.get("description", maestro["product_id"]).astype(str)
     maestro["unit_cost"] = pd.to_numeric(maestro["unit_cost"], errors="coerce").fillna(0)
-    maestro["lead_time_days"] = pd.to_numeric(maestro["lead_time_days"], errors="coerce").fillna(30)
+    
 
     ventas["date"] = pd.to_datetime(ventas["date"], errors="coerce")
     ventas["product_id"] = ventas["product_id"].astype(str)
@@ -498,10 +498,12 @@ politica = st.sidebar.selectbox(
     ],
 )
 
-lead_days = maestro.loc[maestro["product_id"] == producto_sel, "lead_time_days"].iloc[0]
-lead_months_auto = max(1, int(math.ceil(lead_days / 30)))
-
-st.sidebar.write(f"Lead time del SKU: {lead_days:.0f} días ≈ {lead_months_auto} meses")
+lead_months_auto = st.sidebar.number_input(
+    "Lead time general (meses)",
+    min_value=1,
+    value=1,
+    step=1
+)
 
 initial_stock = st.sidebar.number_input("Stock inicial", min_value=0, value=100, step=10)
 review_period = st.sidebar.number_input("Periodo de revisión (meses)", min_value=1, value=1, step=1)
